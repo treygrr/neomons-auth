@@ -8,38 +8,58 @@ definePageMeta({
 
 const auth = useAuth()
 const toast = useToast()
-
-const form = reactive({
-  email: '',
-  password: '',
-  name: '',
-})
+const route = useRoute()
 
 const loading = ref(false)
+const passwordFormRef = ref()
 
-async function signUp() {
+// Check if this is a password setup for an existing OAuth user
+const setupMode = computed(() => route.query.setup === 'password')
+const existingUser = computed(() => {
+  if (setupMode.value) {
+    return {
+      email: route.query.email as string,
+      name: route.query.name as string,
+    }
+  }
+  return undefined
+})
+
+async function handleFormSubmit(formData: { email: string; password: string; name?: string }) {
   if (loading.value) return
   loading.value = true
-  
-  const { error } = await auth.signUp.email({
-    email: form.email,
-    password: form.password,
-    name: form.name,
-  })
-  
-  if (error) {
-    toast.add({
-      title: 'Registration Failed',
-      description: error.message,
-      color: 'error',
-    })
-  } else {
-    toast.add({
-      title: 'Account Created!',
-      description: 'You have been signed up successfully.',
-      color: 'success',
-    })
-    await navigateTo('/user')
+
+  try {
+    if (setupMode.value) {
+      // Handle password setup for existing OAuth user
+      // Note: This would require a custom API endpoint in better-auth
+      // For now, we'll show a message that this feature needs backend implementation
+      toast.add({
+        title: 'Feature Coming Soon',
+        description: 'Password setup for OAuth accounts requires additional backend configuration.',
+        color: 'info',
+      })
+    } else {
+      // Handle new user registration
+      const { error } = await auth.signUp.email({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name || '',
+      })
+      
+      if (error) {
+        passwordFormRef.value?.setError(error.message)
+      } else {
+        toast.add({
+          title: 'Account Created!',
+          description: 'You have been signed up successfully.',
+          color: 'success',
+        })
+        await navigateTo('/user')
+      }
+    }
+  } catch (err) {
+    passwordFormRef.value?.setError('An unexpected error occurred. Please try again.')
   }
   
   loading.value = false
@@ -48,84 +68,12 @@ async function signUp() {
 
 <template>
   <div>
-    <div class="max-w-md mx-auto">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-          Create Account
-        </h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-2">
-          Sign up to get started
-        </p>
-      </div>
-
-      <UCard>
-        <form class="flex flex-col gap-4" @submit.prevent="signUp">
-          <UField label="Name" required>
-            <UInput 
-              v-model="form.name" 
-              type="text" 
-              placeholder="Your full name"
-              size="lg"
-            />
-          </UField>
-
-          <UField label="Email" required>
-            <UInput 
-              v-model="form.email" 
-              type="email" 
-              placeholder="your@email.com"
-              size="lg"
-            />
-          </UField>
-
-          <UField label="Password" required>
-            <UInput 
-              v-model="form.password" 
-              type="password" 
-              placeholder="Create a password"
-              size="lg"
-            />
-          </UField>
-
-          <UButton
-            type="submit"
-            color="primary"
-            size="lg"
-            :loading="loading"
-            :disabled="!form.email || !form.password || !form.name"
-            class="mt-4"
-          >
-            Create Account
-          </UButton>
-
-          <UDivider label="or" />
-
-          <UButton
-            icon="i-simple-icons-github"
-            type="button"
-            color="neutral"
-            variant="outline"
-            size="lg"
-            @click="auth.signIn.social({ provider: 'github', callbackURL: '/user' })"
-          >
-            Continue with GitHub
-          </UButton>
-
-          <div class="text-center mt-6">
-            <span class="text-sm text-gray-600 dark:text-gray-400">
-              Already have an account?
-            </span>
-            <UButton 
-              variant="link" 
-              :padded="false"
-              to="/login"
-              class="text-sm font-medium"
-            >
-              Sign in
-            </UButton>
-          </div>
-        </form>
-      </UCard>
-    </div>
+    <PasswordSetupForm
+      ref="passwordFormRef"
+      :mode="setupMode ? 'setup-password' : 'register'"
+      :existing-user="existingUser"
+      :loading="loading"
+      @submit="handleFormSubmit"
+    />
   </div>
 </template>

@@ -52,14 +52,14 @@ const footerLinks = [
         <UButton
           to="https://github.com/atinux/nuxthub-better-auth"
           icon="i-simple-icons-github"
-          color="gray"
+          color="neutral"
           variant="ghost"
           target="_blank"
         />
         <div v-if="!loggedIn" class="flex items-center gap-2">
           <UButton
             to="/login"
-            color="gray"
+            color="neutral"
             variant="ghost"
           >
             Login
@@ -72,7 +72,7 @@ const footerLinks = [
             Sign Up
           </UButton>
         </div>
-        <UButton v-if="loggedIn" color="black" @click="signOut({ redirectTo: '/' })">
+        <UButton v-if="loggedIn" color="neutral" @click="signOut({ redirectTo: '/' })">
           Sign Out
         </UButton>
       </template>
