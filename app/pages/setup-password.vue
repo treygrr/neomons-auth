@@ -59,6 +59,8 @@ async function handlePasswordSetup(formData: { email: string; password: string; 
             newPassword: formData.password
           }
         })
+
+        
         
         toast.add({
           title: 'Password Set Up Successfully!',
