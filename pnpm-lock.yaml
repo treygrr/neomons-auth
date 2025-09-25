@@ -38,6 +38,9 @@ importers:
       ofetch:
         specifier: ^1.4.1
         version: 1.4.1
+      tailwindcss:
+        specifier: ^4.1.13
+        version: 4.1.13
       vue:
         specifier: ^3.5.21
         version: 3.5.21(typescript@5.9.2)

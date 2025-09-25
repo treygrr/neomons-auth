@@ -3,7 +3,9 @@ export default defineNuxtConfig({
   // https://nuxt.com/modules
   modules: ['@nuxthub/core', '@nuxt/ui', '@nuxt/eslint'],
   devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
+
+css: ["~/assets/css/main.css"],
+
   runtimeConfig: {
     public: {
       auth: {

@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 
 <template>
-  <UPageBody>
+  <div>
     <h1>This is a demo of Better Auth with NuxtHub</h1>
-  </UPageBody>
+  </div>
 </template>

@@ -56,6 +56,22 @@ const footerLinks = [
           variant="ghost"
           target="_blank"
         />
+        <div v-if="!loggedIn" class="flex items-center gap-2">
+          <UButton
+            to="/login"
+            color="gray"
+            variant="ghost"
+          >
+            Login
+          </UButton>
+          <UButton
+            to="/register"
+            color="primary"
+            variant="solid"
+          >
+            Sign Up
+          </UButton>
+        </div>
         <UButton v-if="loggedIn" color="black" @click="signOut({ redirectTo: '/' })">
           Sign Out
         </UButton>
@@ -67,6 +83,5 @@ const footerLinks = [
       </UMain>
     </UContainer>
     <UFooter :links="footerLinks" />
-    <UNotifications />
   </UApp>
 </template>
