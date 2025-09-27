@@ -21,7 +21,6 @@ css: ["~/assets/css/main.css"],
   // https://hub.nuxt.com/docs/getting-started/installation#options
   hub: {
     database: true,
-    kv: true,
   },
 
   // https://eslint.nuxt.com
