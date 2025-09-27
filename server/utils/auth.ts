@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { D1Dialect } from '@atinux/kysely-d1'
-import { anonymous, admin, username } from 'better-auth/plugins'
+import { anonymous, admin, username, twoFactor } from 'better-auth/plugins'
 import { z } from 'zod'
 
 let _auth: ReturnType<typeof betterAuth>
@@ -29,6 +29,7 @@ export function serverAuth() {
             return result.success
           }
         },
+        requireEmailVerification: true
       },
       socialProviders: {
         github: {
@@ -43,7 +44,7 @@ export function serverAuth() {
       },
       plugins: [admin(), username({
         usernameNormalization: (username) => username.toLowerCase()
-      })],
+      }), twoFactor()],
     })
   }
   return _auth

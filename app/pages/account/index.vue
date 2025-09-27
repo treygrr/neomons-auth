@@ -90,6 +90,7 @@
 <script setup lang="ts">
 // Auth composable
 const { user, session, client } = useAuth()
+const toast = useToast()
 
 // Ensure we have session data
 await callOnce(async () => {
@@ -99,7 +100,7 @@ await callOnce(async () => {
 })
 
 // Mock data - these would come from your API/state management
-const username = ref('johndoe') // This would come from better-auth username plugin
+const username = ref(useAuth().user.value?.name || '') // This would come from better-auth username plugin
 const twoFactorEnabled = ref(false)
 
 const connectedAccounts = ref([
@@ -161,13 +162,66 @@ const handleEmailUpdate = async (data: { newEmail: string; password: string }) =
 
 const handleVerificationResent = async () => {
   try {
-    // Implement verification email resend logic
+    if (!user.value) {
+      throw new Error('User not found')
+    }
+
+    // Check if user email is already verified
+    if (user.value.emailVerified) {
+      toast.add({
+        title: 'Email Already Verified',
+        description: 'Your email address is already verified.',
+        icon: 'i-lucide-check-circle',
+        color: 'info'
+      })
+      return
+    }
+
     console.log('Resending verification email')
     
-    // Mock API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // In a real implementation, you'd use better-auth's email verification system
+    // For now, we'll generate a token and URL (this should be done server-side)
+    const token = crypto.randomUUID()
+    const verificationUrl = `${window.location.origin}/verify-email?token=${token}&email=${encodeURIComponent(user.value.email)}`
+    
+    // Call the email verification API
+    const result = await $fetch('/api/send-email-verification', {
+      method: 'POST',
+      body: {
+        user: user.value,
+        subject: 'Verify Your Email Address - Neomons Auth',
+        verificationUrl,
+        token
+      }
+    })
+    
+    // Show success notification
+    toast.add({
+      title: 'Verification Email Sent',
+      description: `Please check your email at ${user.value.email} for the verification link.`,
+      icon: 'i-lucide-mail-check',
+      color: 'success'
+    })
+    
+    console.log('Verification email sent successfully:', result)
   } catch (error) {
     console.error('Verification email error:', error)
+    
+    // Show error notification with more specific error handling
+    let errorMessage = 'An unexpected error occurred while sending the verification email.'
+    
+    if (error instanceof Error) {
+      errorMessage = error.message
+    } else if (typeof error === 'object' && error !== null && 'data' in error) {
+      errorMessage = (error as any).data?.message || errorMessage
+    }
+    
+    toast.add({
+      title: 'Failed to Send Verification Email',
+      description: errorMessage,
+      icon: 'i-lucide-mail-x',
+      color: 'error'
+    })
   }
 }
 
