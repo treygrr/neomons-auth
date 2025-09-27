@@ -44,13 +44,6 @@ const fields = [
 
 const providers = [
   {
-    label: 'Google',
-    icon: 'i-simple-icons-google',
-    onClick: () => {
-      toast.add({ title: 'Google', description: 'Login with Google' })
-    }
-  },
-  {
     label: 'GitHub',
     icon: 'i-simple-icons-github',
     onClick: () => {
@@ -72,8 +65,8 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <div class="flex justify-center">
-    <UPageCard>
+  <div class="flex justify-center pb-12">
+    <UPageCard class="max-w-96">
       <UAuthForm :fields="fields" :schema="schema" :providers="providers" title="Welcome back" icon="i-lucide-lock"@submit="onSubmit">
         <template #description>
           Don't have an account?
@@ -89,6 +82,7 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
         </template>
 
         <template #footer>
+          <USeparator class="my-4" />
           By signing in, you agree to our
           <ULink to="/" class="text-primary font-medium">
             Terms of Service

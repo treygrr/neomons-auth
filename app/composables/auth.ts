@@ -1,5 +1,6 @@
 import { defu } from 'defu'
 import { createAuthClient } from 'better-auth/client'
+import { usernameClient } from "better-auth/client/plugins"
 import type {
   InferSessionFromClient,
   InferUserFromClient,
@@ -21,6 +22,9 @@ export function useAuth() {
     fetchOptions: {
       headers,
     },
+    plugins: [
+      usernameClient()
+    ]
   })
 
   const options = defu(useRuntimeConfig().public.auth as Partial<RuntimeAuthConfig>, {
