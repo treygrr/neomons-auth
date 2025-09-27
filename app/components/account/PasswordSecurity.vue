@@ -24,27 +24,27 @@
       </div>
 
       <div v-if="showPasswordForm" class="space-y-4">
-        <UFormGroup label="Current Password">
+        <UFormField label="Current Password">
           <UInput 
             v-model="passwordForm.currentPassword" 
             type="password"
             placeholder="Enter current password"
           />
-        </UFormGroup>
-        <UFormGroup label="New Password">
+        </UFormField>
+        <UFormField label="New Password">
           <UInput 
             v-model="passwordForm.newPassword" 
             type="password"
             placeholder="Enter new password"
           />
-        </UFormGroup>
-        <UFormGroup label="Confirm New Password">
+        </UFormField>
+        <UFormField label="Confirm New Password">
           <UInput 
             v-model="passwordForm.confirmPassword" 
             type="password"
             placeholder="Confirm new password"
           />
-        </UFormGroup>
+        </UFormField>
         
         <!-- Password Strength Indicator -->
         <div v-if="passwordForm.newPassword" class="space-y-2">

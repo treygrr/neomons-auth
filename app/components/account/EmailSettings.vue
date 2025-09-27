@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <UFormGroup label="Update Email Address">
+      <UFormField label="Update Email Address">
         <div class="space-y-3">
           <UInput 
             v-model="emailForm.newEmail" 
@@ -58,7 +58,7 @@
             :disabled="!emailForm.newEmail || !emailForm.password"
           />
         </div>
-      </UFormGroup>
+      </UFormField>
     </div>
   </UCard>
 </template>

@@ -130,7 +130,7 @@ const retryVerification = async () => {
     const verificationUrl = `${window.location.origin}/verify-email?token=${newToken}&email=${encodeURIComponent(user.value.email)}`
     
     // Call the email verification API
-    await $fetch('/api/send-email-verification', {
+    await useFetch('/api/send-email-verification', {
       method: 'POST',
       body: {
         user: user.value,

@@ -32,18 +32,18 @@
 
       <!-- Profile Form -->
       <div v-if="editingProfile" class="space-y-4">
-        <UFormGroup label="Full Name">
+        <UFormField label="Full Name">
           <UInput 
             v-model="profileForm.name" 
             placeholder="Enter your full name"
           />
-        </UFormGroup>
-        <UFormGroup label="Username">
+        </UFormField>
+        <UFormField label="Username">
           <UInput 
             v-model="profileForm.username" 
             placeholder="Enter your username"
           />
-        </UFormGroup>
+        </UFormField>
         <div class="flex space-x-2">
           <UButton 
             label="Save Changes" 

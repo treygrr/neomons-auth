@@ -38,12 +38,12 @@
           </div>
         </div>
         
-        <UFormGroup label="Type 'DELETE' to confirm">
+        <UFormField label="Type 'DELETE' to confirm">
           <UInput 
             v-model="deleteConfirmation" 
             placeholder="DELETE"
           />
-        </UFormGroup>
+        </UFormField>
         
         <div class="flex justify-end space-x-3 mt-6">
           <UButton 
