@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   // https://nuxt.com/modules
-  modules: ['@nuxthub/core', '@nuxt/ui', '@nuxt/eslint'],
+  modules: ['@nuxthub/core', '@nuxt/ui', '@nuxt/eslint', 'nuxt-resend'],
   devtools: { enabled: true },
 
 css: ["~/assets/css/main.css"],
