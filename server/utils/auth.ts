@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { D1Dialect } from '@atinux/kysely-d1'
-import { anonymous, admin } from 'better-auth/plugins'
+import { anonymous, admin, username } from 'better-auth/plugins'
 
 let _auth: ReturnType<typeof betterAuth>
 export function serverAuth() {
@@ -34,7 +34,7 @@ export function serverAuth() {
           enabled: true,
         },
       },
-      plugins: [anonymous(), admin()],
+      plugins: [admin(), username()],
     })
   }
   return _auth

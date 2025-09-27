@@ -20,22 +20,27 @@ useSeoMeta({
 
 const toast = useToast()
 
-const fields = [{
-  name: 'email',
-  type: 'text' as const,
-  label: 'Email',
-  placeholder: 'Enter your email',
-  required: true
-}, {
-  name: 'password',
-  label: 'Password',
-  type: 'password' as const,
-  placeholder: 'Enter your password'
-}, {
-  name: 'remember',
-  label: 'Remember me',
-  type: 'checkbox' as const
-}]
+const fields = [
+  {
+    name: 'email',
+    type: 'text' as const,
+    label: 'Email',
+    placeholder: 'Enter your email',
+    required: true
+  },
+  {
+    name: 'password',
+    label: 'Password',
+    required: true,
+    type: 'password' as const,
+    placeholder: 'Enter your password'
+  },
+  {
+    name: 'remember',
+    label: 'Remember me',
+    type: 'checkbox' as const
+  }
+]
 
 const providers = [
   {
@@ -55,8 +60,8 @@ const providers = [
 ]
 
 const schema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Must be at least 8 characters')
+  email: z.email('Invalid email'),
+  password: z.string('Password is required').min(8, 'Must be at least 8 characters')
 })
 
 type Schema = z.output<typeof schema>
@@ -68,41 +73,28 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
 
 <template>
   <div class="flex justify-center">
-    <UAuthForm
-      :fields="fields"
-      :schema="schema"
-      :providers="providers"
-      title="Welcome back"
-      icon="i-lucide-lock"
-      class="max-w-1/2"
-      @submit="onSubmit"
-    >
-      <template #description>
-        Don't have an account? 
-        <ULink
-          to="/signup"
-          class="text-primary font-medium">
-          Sign up
-        </ULink>.
-      </template>
+    <UPageCard>
+      <UAuthForm :fields="fields" :schema="schema" :providers="providers" title="Welcome back" icon="i-lucide-lock"@submit="onSubmit">
+        <template #description>
+          Don't have an account?
+          <ULink to="/signup" class="text-primary font-medium">
+            Sign up
+          </ULink>.
+        </template>
 
-      <template #password-hint>
-        <ULink
-          to="/"
-          class="text-primary font-medium"
-          tabindex="-1">
-          Forgot password?
-        </ULink>
-      </template>
+        <template #password-hint>
+          <ULink to="/" class="text-primary font-medium" tabindex="-1">
+            Forgot password?
+          </ULink>
+        </template>
 
-      <template #footer>
-        By signing in, you agree to our 
-        <ULink
-          to="/"
-          class="text-primary font-medium">
-          Terms of Service
-        </ULink>.
-      </template>
-    </UAuthForm>
+        <template #footer>
+          By signing in, you agree to our
+          <ULink to="/" class="text-primary font-medium">
+            Terms of Service
+          </ULink>.
+        </template>
+      </UAuthForm>
+    </UPageCard>
   </div>
 </template>

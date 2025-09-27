@@ -46,19 +46,15 @@ const fields = [
   }
 ]
 
-const providers = [{
-  label: 'Google',
-  icon: 'i-simple-icons-google',
-  onClick: () => {
-    toast.add({ title: 'Google', description: 'Login with Google' })
+const providers = [
+  {
+    label: 'GitHub',
+    icon: 'i-simple-icons-github',
+    onClick: () => {
+      useAuth().signIn.social({ provider: 'github', callbackURL: '/' })
+    }
   }
-}, {
-  label: 'GitHub',
-  icon: 'i-simple-icons-github',
-  onClick: () => {
-    toast.add({ title: 'GitHub', description: 'Login with GitHub' })
-  }
-}]
+]
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -101,16 +97,17 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
 <template>
   <div class="flex justify-center">
+    <UPageCard>
+      <UAuthForm :fields="fields" :schema="schema" :providers="providers" title="Create an account"
+        :submit="{ label: 'Create account' }" @submit="onSubmit">
+        <template #description>
+          Already have an account? <ULink to="/login" class="text-primary font-medium">Login</ULink>.
+        </template>
 
-    <UAuthForm :fields="fields" :schema="schema" :providers="providers" title="Create an account" class="max-w-1/2"
-      :submit="{ label: 'Create account' }" @submit="onSubmit">
-      <template #description>
-        Already have an account? <ULink to="/login" class="text-primary font-medium">Login</ULink>.
-      </template>
-
-      <template #footer>
-        By signing up, you agree to our <ULink to="/" class="text-primary font-medium">Terms of Service</ULink>.
-      </template>
-    </UAuthForm>
+        <template #footer>
+          By signing up, you agree to our <ULink to="/" class="text-primary font-medium">Terms of Service</ULink>.
+        </template>
+      </UAuthForm>
+    </UPageCard>
   </div>
 </template>
