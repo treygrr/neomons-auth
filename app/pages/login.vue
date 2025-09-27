@@ -1,120 +1,108 @@
 <script setup lang="ts">
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
+
 definePageMeta({
-  auth: {
-    only: 'guest',
-    redirectUserTo: '/user',
-  },
+  middleware: async (to, _from) => {
+    const session = await useAuth().loggedIn
+    if (!session.value) {
+      if (to.path === '/dashboard') {
+        return navigateTo('/')
+      }
+    }
+  }
 })
 
-const auth = useAuth()
+useSeoMeta({
+  title: 'Login',
+  description: 'Login to your account to continue'
+})
+
 const toast = useToast()
 
-const form = reactive({
-  email: '',
-  password: '',
+const fields = [{
+  name: 'email',
+  type: 'text' as const,
+  label: 'Email',
+  placeholder: 'Enter your email',
+  required: true
+}, {
+  name: 'password',
+  label: 'Password',
+  type: 'password' as const,
+  placeholder: 'Enter your password'
+}, {
+  name: 'remember',
+  label: 'Remember me',
+  type: 'checkbox' as const
+}]
+
+const providers = [
+  {
+    label: 'Google',
+    icon: 'i-simple-icons-google',
+    onClick: () => {
+      toast.add({ title: 'Google', description: 'Login with Google' })
+    }
+  },
+  {
+    label: 'GitHub',
+    icon: 'i-simple-icons-github',
+    onClick: () => {
+      useAuth().signIn.social({ provider: 'github', callbackURL: '/' })
+    }
+  }
+]
+
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Must be at least 8 characters')
 })
 
-const loading = ref(false)
+type Schema = z.output<typeof schema>
 
-async function signIn() {
-  if (loading.value) return
-  loading.value = true
-  
-  const { error } = await auth.signIn.email({
-    email: form.email,
-    password: form.password,
-  })
-  
-  if (error) {
-    toast.add({
-      title: 'Sign In Failed',
-      description: error.message,
-      color: 'error',
-    })
-  } else {
-    toast.add({
-      title: 'Welcome back!',
-      description: 'You have been signed in successfully.',
-      color: 'success',
-    })
-    await navigateTo('/user')
-  }
-  
-  loading.value = false
+function onSubmit(payload: FormSubmitEvent<Schema>) {
+  console.log('Submitted', payload)
 }
 </script>
 
 <template>
-  <div>
-    <div class="max-w-md mx-auto">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome Back
-        </h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-2">
-          Sign in to your account
-        </p>
-      </div>
+  <div class="flex justify-center">
+    <UAuthForm
+      :fields="fields"
+      :schema="schema"
+      :providers="providers"
+      title="Welcome back"
+      icon="i-lucide-lock"
+      class="max-w-1/2"
+      @submit="onSubmit"
+    >
+      <template #description>
+        Don't have an account? 
+        <ULink
+          to="/signup"
+          class="text-primary font-medium">
+          Sign up
+        </ULink>.
+      </template>
 
-      <UCard>
-        <form class="flex flex-col gap-4" @submit.prevent="signIn">
-          <UField label="Email" required>
-            <UInput 
-              v-model="form.email" 
-              type="email" 
-              placeholder="your@email.com"
-              size="lg"
-            />
-          </UField>
+      <template #password-hint>
+        <ULink
+          to="/"
+          class="text-primary font-medium"
+          tabindex="-1">
+          Forgot password?
+        </ULink>
+      </template>
 
-          <UField label="Password" required>
-            <UInput 
-              v-model="form.password" 
-              type="password" 
-              placeholder="Enter your password"
-              size="lg"
-            />
-          </UField>
-
-          <UButton
-            type="submit"
-            color="primary"
-            size="lg"
-            :loading="loading"
-            :disabled="!form.email || !form.password"
-            class="mt-4"
-          >
-            Sign In
-          </UButton>
-
-          <UDivider label="or" />
-
-          <UButton
-            icon="i-simple-icons-github"
-            type="button"
-            color="neutral"
-            variant="outline"
-            size="lg"
-            @click="auth.signIn.social({ provider: 'github', callbackURL: '/user' })"
-          >
-            Continue with GitHub
-          </UButton>
-
-          <div class="text-center mt-6">
-            <span class="text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?
-            </span>
-            <UButton 
-              variant="link" 
-              :padded="false"
-              to="/register"
-              class="text-sm font-medium"
-            >
-              Create one
-            </UButton>
-          </div>
-        </form>
-      </UCard>
-    </div>
+      <template #footer>
+        By signing in, you agree to our 
+        <ULink
+          to="/"
+          class="text-primary font-medium">
+          Terms of Service
+        </ULink>.
+      </template>
+    </UAuthForm>
   </div>
 </template>
